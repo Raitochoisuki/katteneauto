@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+      <!--入力フォームの作成 -->
+      <form id="afcodeform" method="post">
+        <!--各ショップのアフィリエイトタグ入力欄 -->
+        <fieldset>
+          <legend>ショップ1</legend>
+            <label>
+              ショップ名：
+              <input type="text" value="Amazon"></input>
+            </label><br>
+
+            <label>ショップボタンカラー：
+              <select name="color">
+                <option value="orange" selected>orange</option>
+                <option value="red">red</option>
+                <option value="blue">blue</option>
+                <option value="green">green</option>
+                <option value="pink">pink</option>
+              </select>
+            </label><br>
+
+            <label>
+              コード入力欄：<br>
+              <textarea placeholder="ショップ1のアフィリエイトHTMLコードを入力してください"/></textarea>
+            </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>ショップ2</legend>
+            <label>
+              ショップ名：
+              <input type="text" value="楽天"></input>
+            </label><br>
+
+            <label>ショップボタンカラー：
+              <select name="color">
+                <option value="orange">orange</option>
+                <option value="red" selected>red</option>
+                <option value="blue">blue</option>
+                <option value="green">green</option>
+                <option value="pink">pink</option>
+              </select>
+            </label><br>
+
+            <label>
+              コード入力欄：<br>
+              <textarea placeholder="ショップ2のアフィリエイトHTMLコードを入力してください"/></textarea>
+            </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>ショップ3</legend>
+            <label>
+              ショップ名：
+              <input type="text" value="Yahoo!"></input>
+            </label><br>
+
+            <label>ショップボタンカラー：
+              <select name="color">
+                <option value="orange">orange</option>
+                <option value="red">red</option>
+                <option value="blue" selected>blue</option>
+                <option value="green">green</option>
+                <option value="pink">pink</option>
+              </select>
+            </label><br>
+
+            <label>
+              コード入力欄：<br>
+              <textarea placeholder="ショップ3のアフィリエイトHTMLコードを入力してください"/></textarea>
+            </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>ショップ4</legend>
+            <label>
+              ショップ名：
+              <input type="text" value="Kindle"></input>
+            </label><br>
+
+            <label>ショップボタンカラー：
+              <select name="color">
+                <option value="orange">orange</option>
+                <option value="red">red</option>
+                <option value="blue">blue</option>
+                <option value="green" selected>green</option>
+                <option value="pink">pink</option>
+              </select>
+            </label><br>
+
+            <label>
+              コード入力欄：<br>
+              <textarea placeholder="ショップ4のアフィリエイトHTMLコードを入力してください"/></textarea>
+            </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>ショップ5</legend>
+            <label>
+              ショップ名：
+              <input type="text" value="その他"></input>
+            </label><br>
+
+            <label>ショップボタンカラー：
+              <select name="color">
+                <option value="orange">orange</option>
+                <option value="red">red</option>
+                <option value="blue">blue</option>
+                <option value="green">green</option>
+                <option value="pink" selected>pink</option>
+              </select>
+            </label><br>
+
+            <label>
+              コード入力欄：<br>
+              <textarea placeholder="ショップ5のアフィリエイトHTMLコードを入力してください"/></textarea>
+            </label>
+        </fieldset>
+
+      </form>
+
+
+      <form id="selectmainform" method="post">
+        <!--メインショップの選択 -->
+        <fieldset>
+
+          <legend>メインショップの選択(HTMLの場合のみ)</legend>
+
+            <label>画像リンク、メインリンク、タイトルを抽出したいショップを選択してください。<br>
+              <select name="selectmainformshop">
+              <option name="shop1">ショップ1</option>
+              <option name="shop2">ショップ2</option>
+              <option name="shop3">ショップ3</option>
+              <option name="shop4">ショップ4</option>
+              <option name="shop5">ショップ5</option>
+              </select>
+            </label>
+
+        </fieldset>
+
+      </form>
+
+      <form id="others" method="post">
+        <fieldset>
+
+          <legend>その他</legend>
+
+            <label>メイン商品リンクを別に設定する場合：<br>
+              <textarea placeholder="商品リンクをここに入力"/></textarea>
+            </label><br>
+
+            <label>メイン画像リンクを別に参照する場合：<br>
+              <textarea placeholder="画像リンクをここに入力"/></textarea>
+            </label><br>
+
+            <label>タイトルを手動で付ける場合：<br>
+              <textarea placeholder="タイトルをここに入力"/></textarea>
+            </label><br>
+
+            <label>メイン商品リンクを別に設定する場合：<br>
+              <textarea placeholder="商品リンクをここに入力"/></textarea>
+            </label><br>
+
+            <label>商品説明(任意)：<br>
+              <textarea placeholder="商品説明をここに入力"/></textarea>
+            </label>
+
+        </fieldset>
+
+      </form>
+
+      <form id="button" method="post">
+        <!--送信ボタン -->
+        <button id="button1">変換</button>
+        <button id="button2">ショップデータクリア</button>
+        <button id="button3">生成結果クリア</button>
+      </form>
+
+      <div class="sp-info">
+        <strong>結果</strong>
+        <div id="result">
+        </div>
+      </div>
+
+
+      <script src="katteneauto.js"></script>
+    </body>
+</html>
