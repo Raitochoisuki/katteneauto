@@ -219,7 +219,7 @@ window.onload = function(){ //始まり
     //各ショップのshCode上の、文字列の位置を一括検索 ここまで
 
     //HTMLコードか、直リンクか、無効かの判定
-    var h =[ela[0],atb[0],atb[3]];//htmlを判断する要素、直リンクはdrcをそのまま使用
+    var h =[ela[0],atb[0],ela[2]];//htmlを判断する要素、直リンクはdrcをそのまま使用
     var hIndexNum = new Array(); //htmlを判断する要素のArray(strIndexNum)箱の中の位置(インデックス番号)
     var posh = new Array();　// htmlを判断する要素の、入力フォームの文字列上の位置(インデックス番号)
     for (var i = 0; i < afcodepart.length; i++) {
