@@ -255,22 +255,19 @@ window.onload = function(){ //始まり
     }
 
     for (var i = 0; i < afcodepart.length; i++) {//HTMLか直リンクか無効か
-      shjudgeresult[i] = andjudge(posh[i][0],posh[i][1],posh[i][2],"HTML");//poshが全て0以上ならHTML
+      (posh[i][0] >=0)&&(posh[i][1]>=0)&&(posh[i][2])
+      ? (shjudgeresult[i] = "HTML")//poshが全て0以上ならHTML
 
-      if (shjudgeresult[i] == "HTML"){//HTMLと認められれば次のショップへ
-        continue;
-      }
+      : (posd[i][0]>=0)||(posd[i][1]>=0)||(posd[i][2]>=0)
+        ? (shjudgeresult[i] = "直リンク")
 
-      shjudgeresult[i] = orjudge(posd[i][0],posd[i][1],posd[i][2],"直リンク");//posdのいずれかが0以上ならダイレクトリンク
-
-      if (shjudgeresult[i] == "直リンク"){//ダイレクトリンクと認められれば次のショップへ
-        continue;
-      }
-
-      shjudgeresult[i]　= "無効";//認められないリンクは無効
+        :shjudgeresult[i]　= "無効" ;
     }
 
-    print(shjudgeresult[0]);
+    let shvalid = shjudgeresult.map(v => (v === "HTML")||(v === "直リンク"));//ショップが有効か無効かをtruefalseで返す、有効であればtrueが返る
+
+    //HTMLコードか、直リンクか、無効かの判定 終わり
+
 
     //タイトル部分の切り出し
     var shoptitle = new Array();//各ショップのタイトル部分文字列を入れる箱
@@ -426,13 +423,20 @@ window.onload = function(){ //始まり
         shortcodesite[i] = "";
       }
     }
-
-    for (var i = 0; i < afcodepart.length; i++) {
-      if ((shortcodesite[i] != "") && (shortcodesite[i+1] != "") && (shortcodesite[i+1] !== void 0) && (shortcodesite[i+1] !== void 0 /*voidは常にundefinedを返す*/)) {
-        shortcodesite[i] = shortcodesite[i] + ","; //空でない2つの有効サイトの間にカンマを入れる。
-      }
-    }
     /*ショップサイトの作成終わり*/
+
+    /*ショートコードのサイト間にカンマを入れる*/
+    for (var i = 0; i < afcodepart.length; i++) {
+      let j = 0;
+      //ショップが有効ならカンマを入れる
+      if(shvalid[i] === true){
+        shortcodesite[i] = shortcodesite[i] + ",";
+        j++;
+      }
+      //有効数より1つ少ない数のカンマを入れる
+      if(j === validshnum-1){break;}
+    }
+    /*ショートコードのサイト間にカンマを入れる　終わり*/
 
     /*ショートコード文字列結合*/
     var shortcodesitejoin = shortcodesite.join("\u0020");
