@@ -242,18 +242,6 @@ window.onload = function(){ //始まり
 
     var shjudgeresult = new Array();//入力フォームのコードの種別を収める箱
 
-    function andjudge (posh1,posh2,posh3,tc){//And判定、htmlの判定に用いる
-      if ((posh1 >= 0) && (posh2 >= 0) && (posh3 >= 0)) {
-        return tc;
-      }
-    }
-
-    function orjudge (posd1,posd2,posd3,tc){//or判定、ダイレクトリンクの判定に用いる
-      if ((posd1 >= 0) || (posd2 >= 0) || (posd3 >= 0)) {
-        return tc;
-      }
-    }
-
     for (var i = 0; i < afcodepart.length; i++) {//HTMLか直リンクか無効か
       (posh[i][0] >=0)&&(posh[i][1]>=0)&&(posh[i][2])
       ? (shjudgeresult[i] = "HTML")//poshが全て0以上ならHTML
@@ -434,7 +422,7 @@ window.onload = function(){ //始まり
         j++;
       }
       //有効数より1つ少ない数のカンマを入れる
-      if(j === validshnum-1){break;}
+      if(j >= validshnum-1){break;}
     }
     /*ショートコードのサイト間にカンマを入れる　終わり*/
 
