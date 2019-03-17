@@ -22,8 +22,10 @@ window.onload = function(){ //始まり
   }
 
   var ffInfo = new Array();//タグ情報をショップ毎に含んだ箱
+  /*ショップデータは配列番号0に統一*/
+  ffInfo[0] = [];
   for (var i = 0; i < afcodepart.length; i++) {
-    ffInfo[i] = new ff(afshopparts.namepart[i],afshopparts.colorpart[i],afshopparts.afcodepart[i]);
+    ffInfo[0][i] = new ff(afshopparts.namepart[i],afshopparts.colorpart[i],afshopparts.afcodepart[i]);
   }
   /*タグ情報をショップ毎にまとめる　ここまで*/
 
@@ -174,24 +176,25 @@ window.onload = function(){ //始まり
     }
 
     var shInfo = new Array();//抽出したショップ情報を含んだ箱
-
+    /*ショップ情報は配列番号0に統一*/
+    shInfo[0] = [];
     for (var i = 0; i < afcodepart.length; i++) {
-      shInfo[i] = new sh(ffInfo[i].ffName,ffInfo[i].ffBtncolor,ffInfo[i].ffCode);
-      switch (shInfo[i].shBtncolor) {//色情報を数字から文字列に変換
+      shInfo[0][i] = new sh(ffInfo[0][i].ffName,ffInfo[0][i].ffBtncolor,ffInfo[0][i].ffCode);
+      switch (shInfo[0][i].shBtncolor) {//色情報を数字から文字列に変換
         case 0:
-          shInfo[i].shBtncolor = "orange";
+          shInfo[0][i].shBtncolor = "orange";
           break;
         case 1:
-          shInfo[i].shBtncolor = "red";
+          shInfo[0][i].shBtncolor = "red";
           break;
         case 2:
-          shInfo[i].shBtncolor = "blue";
+          shInfo[0][i].shBtncolor = "blue";
           break;
         case 3:
-          shInfo[i].shBtncolor = "green";
+          shInfo[0][i].shBtncolor = "green";
           break;
         case 4:
-          shInfo[i].shBtncolor = "pink";
+          shInfo[0][i].shBtncolor = "pink";
           break;
         default:
           break;
@@ -199,100 +202,150 @@ window.onload = function(){ //始まり
     }
     //ショップ毎のタグ情報から値を抽出しまとめる ここまで
 
+    //コードについて、ショップ情報と追加情報を同時に処理したいので、配列にまとめる
+    var codebox = [];
+    codebox[0] = [];//ショップデータを0に入れる
+    for (var i = 0; i < afcodepart.length; i++) {
+      codebox[0][i] = shInfo[0][i].shCode;
+    }
+
+    codebox[1] = [];//otherデータを1に入れる
+    for (var i = 0; i < addedinfotext.length; i++) {
+      codebox[1][i] = addedinfotext[i].value;
+    }
+    //コードまとめここまで
+
     //各ショップのshCode上の、文字列の位置を一括検索
     var shStrPos = new Array();//文字列の位置を収める箱
     var strIndexNum = new Object();//文字列のインデックス番号を収める箱
 
-    for (var i = 0; i < afcodepart.length; i++) {
-      shStrPos[i] = new Array();
+    for (var n = 0; n < codebox.length; n++) {
+      shStrPos[n] = new Array();//n=0はショップ、n=1はother
 
-      for (var j = 0; j < str.length; j++) {
-        shStrPos[i][j] = new Array();
+      for (var i = 0; i < codebox[n].length; i++) {
+        shStrPos[n][i] = new Array();
 
-        for (var k = 0; k < str[j].length; k++) {
-          shStrPos[i][j][k] = shInfo[i].shCode.indexOf(str[j][k]);//iがショップ番号、j、kが文字列のインデックス番号
-          strIndexNum[str[j][k]] = [j,k]//文字列(str[j][k])とインデックス番号j,kを対応させる
+        for (var j = 0; j < str.length; j++) {
+          shStrPos[n][i][j] = new Array();
+
+          for (var k = 0; k < str[j].length; k++) {
+            shStrPos[n][i][j][k] = codebox[n][i].indexOf(str[j][k]);//iがショップ番号、j、kが文字列のインデックス番号
+            strIndexNum[str[j][k]] = [j,k]//文字列(str[j][k])とインデックス番号j,kを対応させる
+          }
         }
       }
     }
-
     //各ショップのshCode上の、文字列の位置を一括検索 ここまで
 
     //HTMLコードか、直リンクか、無効かの判定
     var h =[ela[0],atb[0],ela[2]];//htmlを判断する要素、直リンクはdrcをそのまま使用
+
+    /*基本はショップ情報、頭otrはotherの情報*/
     var hIndexNum = new Array(); //htmlを判断する要素のArray(strIndexNum)箱の中の位置(インデックス番号)
     var posh = new Array();　// htmlを判断する要素の、入力フォームの文字列上の位置(インデックス番号)
-    for (var i = 0; i < afcodepart.length; i++) {
-      posh[i] = new Array();
-      for (var j = 0; j < h.length; j++) {
-        hIndexNum[j] = strIndexNum[h[j]];
-        posh[i][j] = shStrPos[i][hIndexNum[j][0]][hIndexNum[j][1]];
+    var dIndexNum = new Array();　//DirectLinkについても同様
+    var posd = new Array();
+
+    for (var n = 0; n < codebox.length; n++) {
+      posh[n] = [];
+      for (var i = 0; i < codebox[n].length; i++) {
+        posh[n][i] = [];
+        for (var j = 0; j < h.length; j++) {
+          hIndexNum[j] = strIndexNum[h[j]];
+          posh[n][i][j] = shStrPos[n][i][hIndexNum[j][0]][hIndexNum[j][1]];
+        }
       }
     }
 
-    var dIndexNum = new Array();　//DirectLinkについても同様
-    var posd = new Array();
-    for (var i = 0; i < afcodepart.length; i++) {
-      posd[i] = new Array();
-      for (var j = 0; j < drc.length; j++) {
-        dIndexNum[j] = strIndexNum[drc[j]];
-        posd[i][j] = shStrPos[i][dIndexNum[j][0]][dIndexNum[j][1]];
+    for (var n = 0; n < codebox.length; n++) {
+      posd[n] = [];
+      for (var i = 0; i < codebox[n].length; i++) {
+        posd[n][i] = new Array();
+        for (var j = 0; j < drc.length; j++) {
+          dIndexNum[j] = strIndexNum[drc[j]];
+          posd[n][i][j] = shStrPos[n][i][dIndexNum[j][0]][dIndexNum[j][1]];
+        }
       }
     }
 
     var shjudgeresult = new Array();//入力フォームのコードの種別を収める箱
+    var shvalid = [];
 
-    for (var i = 0; i < afcodepart.length; i++) {//HTMLか直リンクか無効か
-      (posh[i][0] >=0)&&(posh[i][1]>=0)&&(posh[i][2])
-      ? (shjudgeresult[i] = "HTML")//poshが全て0以上ならHTML
+    for (var n = 0; n < codebox.length; n++) {
+      shjudgeresult[n] = [];
+      for (var i = 0; i < codebox[n].length; i++) {//HTMLか直リンクか無効か
+        (posh[n][i][0] >=0)&&(posh[n][i][1]>=0)&&(posh[n][i][2])
+        ? (shjudgeresult[n][i] = "HTML")//poshが全て0以上ならHTML
 
-      : (posd[i][0]>=0)||(posd[i][1]>=0)||(posd[i][2]>=0)
-        ? (shjudgeresult[i] = "直リンク")
+        : (posd[n][i][0]>=0)||(posd[n][i][1]>=0)||(posd[n][i][2]>=0)
+          ? (shjudgeresult[n][i] = "直リンク")
 
-        :shjudgeresult[i]　= "無効" ;
+          :shjudgeresult[n][i]　= "無効" ;
+      }
+
+      shvalid[n] = shjudgeresult[n].map(v => (v === "HTML")||(v === "直リンク"));//ショップが有効か無効かをtruefalseで返す、有効であればtrueが返る
+
     }
-
-    let shvalid = shjudgeresult.map(v => (v === "HTML")||(v === "直リンク"));//ショップが有効か無効かをtruefalseで返す、有効であればtrueが返る
 
     //HTMLコードか、直リンクか、無効かの判定 終わり
 
 
     //タイトル部分の切り出し
     var shoptitle = new Array();//各ショップのタイトル部分文字列を入れる箱
-    for (var i = 0; i < afcodepart.length; i++) {
-      var endposT = shStrPos[i][strIndexNum["</a>"][0]][strIndexNum["</a>"][1]];//</a>がある場所の1文字手前の位置
-      var cutT = shInfo[i].shCode.slice(0,endposT);//endposTまでを切り出す
-      var stposT = cutT.lastIndexOf(">")+1;//切り出したcutTの一番後ろの>の位置+1
-      shoptitle[i] = shInfo[i].shCode.slice(stposT,endposT);//タイトル部分の切り出し
+
+    for (var n = 0; n < codebox.length; n++) {
+      shoptitle[n] = [];
+      for (var i = 0; i < codebox[n].length; i++) {
+        if (shjudgeresult[n][i]==="HTML") {
+          var endposT = shStrPos[n][i][strIndexNum["</a>"][0]][strIndexNum["</a>"][1]];//</a>がある場所の1文字手前の位置
+          var cutT = codebox[n][i].slice(0,endposT);//endposTまでを切り出す
+          var stposT = cutT.lastIndexOf(">")+1;//切り出したcutTの一番後ろの>の位置+1
+          shoptitle[n][i] = codebox[n][i].slice(stposT,endposT);//タイトル部分の切り出し
+        }else if((shjudgeresult[n][i]==="直リンク")||((n===1)&&(i===2))) {
+          shoptitle[n][i] = codebox[n][i];
+          continue;
+
+        }else{
+          shoptitle[n][i] = "";
+          continue;
+
+        }
+      }
     }
+
     //タイトル部分の切り出しここまで
 
     //HTMLリンク部分の切り出し
     var afurlatrb = new Array();//aタグの中身を全部取り出す
     var afurl = new Array();//属性無しの純リンク
-    for (var i = 0; i < afcodepart.length; i++) {
 
-      if (shjudgeresult[i] == "直リンク"){//直リンクの場合はコードをそのまま代入
-        afurlatrb[i] =  "href=" +
-                    "\"" +
-                    shInfo[i].shCode +
-                    "\"" +
-                    "\u0020" +
-                    "target=" + "\"" + "blank" + "\"";//属性を付加
-        afurl[i] = shInfo[i].shCode
-        continue;
-      }else if(shjudgeresult[i] == "無効"){
-        afurlatrb[i] = ""//無効の場合は空白を返しておく
-        afurl[i] = "";
-        continue;
-      }else {
-        var stposHatrb = shStrPos[i][strIndexNum["<a"][0]][strIndexNum["<a"][1]]+3;//aタグの中身を全部取り出す
-        var endposHatrb = shInfo[i].shCode.indexOf(">",stposHatrb);//<aの次の括弧閉じの位置
-        afurlatrb[i] = shInfo[i].shCode.slice(stposHatrb,endposHatrb);
+    for (var n = 0; n < codebox.length; n++) {
+      afurlatrb[n] = [];
+      afurl[n] = [];
+      for (var i = 0; i < codebox[n].length; i++) {
 
-        var stposH = shStrPos[i][strIndexNum["href="][0]][strIndexNum["href="][1]]+6;
-        var endposH = shInfo[i].shCode.indexOf("\"",stposH);
-        afurl[i] = shInfo[i].shCode.slice(stposH,endposH);
+        if (shjudgeresult[n][i] == "直リンク"){//直リンクの場合はコードをそのまま代入
+          afurlatrb[n][i] =  "href=" +
+                              "\"" +
+                              codebox[n][i] +
+                              "\"" +
+                              "\u0020" +
+                              "target=" + "\"" + "blank" + "\"";//属性を付加
+          afurl[n][i] = codebox[n][i]
+          continue;
+        }else if(shjudgeresult[n][i] == "無効"){
+          afurlatrb[n][i] = ""//無効の場合は空白を返しておく
+          afurl[n][i] = "";
+          continue;
+        }else {
+          var stposHatrb = shStrPos[n][i][strIndexNum["<a"][0]][strIndexNum["<a"][1]]+3;//aタグの中身を全部取り出す
+          var endposHatrb = codebox[n][i].indexOf(">",stposHatrb);//<aの次の括弧閉じの位置
+          afurlatrb[n][i] = codebox[n][i].slice(stposHatrb,endposHatrb);
+
+          var stposH = shStrPos[n][i][strIndexNum["href="][0]][strIndexNum["href="][1]]+6;
+          var endposH = codebox[n][i].indexOf("\"",stposH);
+          afurl[n][i] = codebox[n][i].slice(stposH,endposH);
+        }
       }
     }
     //HTMLリンク部分の切り出し終わり
@@ -300,21 +353,32 @@ window.onload = function(){ //始まり
     //画像URLの切り出し
     var imgsrcatrb = new Array();
     var imgsrc = new Array();
-    for (var i = 0; i < afcodepart.length; i++) {
-      var judgepos = shStrPos[i][strIndexNum["<img"][0]][strIndexNum["<img"][1]];//<imgの位置
+    for (var n = 0; n < codebox.length; n++) {
+      imgsrcatrb[n] = [];
+      imgsrc[n] = [];
 
-      if (judgepos <= -1) {
-        imgsrcatrb[i] = "";//もしimgタグが無い場合はソース無し
-        imgsrc[i] = ""
-        continue;
-      }else{//imgタグがある場合は、そのソースを抜き出す
-        var stposIatrb = judgepos + 4;
-        var endposIatrb = shInfo[i].shCode.indexOf(">",stposIatrb);
-        imgsrcatrb[i] = shInfo[i].shCode.slice(stposIatrb,endposIatrb);
+      for (var i = 0; i < codebox[n].length; i++) {
+        var judgepos = shStrPos[n][i][strIndexNum["<img"][0]][strIndexNum["<img"][1]];//<imgの位置
 
-        var stposI = shStrPos[i][strIndexNum["src="][0]][strIndexNum["src="][1]]+5;
-        var endposI = shInfo[i].shCode.indexOf("\"",stposI);
-        imgsrc[i] = shInfo[i].shCode.slice(stposI,endposI);
+        if (judgepos>=0) {//imgタグがある場合は、そのソースを抜き出す
+          var stposIatrb = judgepos + 4;
+          var endposIatrb = codebox[n][i].indexOf(">",stposIatrb);
+          imgsrcatrb[n][i] = codebox[n][i].slice(stposIatrb,endposIatrb);
+
+          var stposI = shStrPos[n][i][strIndexNum["src="][0]][strIndexNum["src="][1]]+5;
+          var endposI = codebox[n][i].indexOf("\"",stposI);
+          imgsrc[n][i] = codebox[n][i].slice(stposI,endposI);
+          continue;
+
+        }else if ((n===1)&&(i===1)&&(shjudgeresult[n][i]==="直リンク")) {//付記情報かつ直リンクの場合、直画像リンクとして処理
+          imgsrcatrb[n][i] = codebox[n][i];
+          imgsrc[n][i] =  "src=\"" + codebox[n][i].replace(/\r?\n/g, '') + "\"";
+          continue;
+
+        }else {//無効や、imgタグが無い場合
+          imgsrcatrb[n][i] = "";//もしimgタグが無い場合はソース無し
+          imgsrc[n][i] = "";
+        }
       }
     }
     //画像URLの切り出し終わり
@@ -325,8 +389,8 @@ window.onload = function(){ //始まり
 
     //有効リンク数の計算
     var validshnum = 0; //ボタンを押すたびに0からスタート
-    for (var i = 0; i < afcodepart.length; i++) {
-      if ((shjudgeresult[i] == "HTML") || (shjudgeresult[i] == "直リンク")) {
+    for (var i = 0; i < codebox[0].length; i++) {
+      if ((shjudgeresult[0][i] == "HTML") || (shjudgeresult[0][i] == "直リンク")) {
         validshnum++;//HTMLか直リンクであれば有効リンク数が一つ増える。
       }
     }
@@ -363,62 +427,63 @@ window.onload = function(){ //始まり
       description : "",
     };
 
-    if (addedinfotext[0].value/*メインリンクを追加で入力するフォーム*/ == "" ) {
-      maindata.url = afurl[mainnum];
-      maindata.urlatrb = afurlatrb[mainnum];
+    if (afurl[1][0]/*メインリンクを追加で入力するフォーム*/ === "" ) {
+      maindata.url = afurl[0][mainnum];
+      maindata.urlatrb = afurlatrb[0][mainnum];
     }else {
-      maindata.url = addedinfotext[0].value.replace(/\r?\n/g, '');
-      maindata.urlatrb = "href=\"" + addedinfotext[0].value.replace(/\r?\n/g, '') + "\"" + "\u0020" + "target=\"_blank\"" + "\u0020" + "rel=\"nofollow\"";
+      maindata.url = afurl[1][0].replace(/\r?\n/g, '');
+      maindata.urlatrb = afurlatrb[1][0].replace(/\r?\n/g, '');
     }
 
-    if (addedinfotext[1].value/*画像リンクを追加で入力するフォーム*/ == "" ) {
-      maindata.imgurl = imgsrc[mainnum];
-      maindata.imgurlatrb = imgsrcatrb[mainnum];
+    if (imgsrc[1][1]/*画像リンクを追加で入力するフォーム*/ === "" ) {
+      maindata.imgurl = imgsrc[0][mainnum];
+      maindata.imgurlatrb = imgsrcatrb[0][mainnum];
     }else {
-      maindata.imgurl = addedinfotext[1].value.replace(/\r?\n/g, '');
-      maindata.imgurlatrb = "src=\"" + addedinfotext[1].value.replace(/\r?\n/g, '') + "\"";
+      maindata.imgurl = imgsrc[1][1].replace(/\r?\n/g, '');
+      maindata.imgurlatrb = imgsrcatrb[1][1].replace(/\r?\n/g, '');
     }
 
     var titlebeforecut = new String;
-    if (addedinfotext[2].value/*タイトルで入力するフォーム*/ == "" ) {
-      titlebeforecut = shoptitle[mainnum];
+    if (shoptitle[1][2]/*タイトルで入力するフォーム*/ === "" ) {
+      titlebeforecut = shoptitle[0][mainnum];
     }else {
-      titlebeforecut = addedinfotext[2].value.replace(/\r?\n/g, '');
+      titlebeforecut = shoptitle[1][2].replace(/\r?\n/g, '');
     }
 
     maindata.title = cutstr(titlebeforecut,124,"...");//メインタイトルを半角126文字以下に切り取る
 
-    maindata.description = addedinfotext[3].value.replace(/\r?\n/g, '');//商品説明を追加するフォーム
+    maindata.description = addedinfotext[3].value.replace(/\r?\n/g, '');//商品説明を追加するフォーム ここは直代入なのでaddedinfotextをぞのまま使う
 
     //メインリンクの判別終わり
 
     //ショートコードの作成
     /*ショップの分だけ、siteを作る*/
     var shortcodesite = new Array();
-    for (var i = 0; i < afcodepart.length; i++) {
-      if ((shjudgeresult[i] == "HTML") || (shjudgeresult[i] == "直リンク")) {
-        shortcodesite[i] = rplc_str(shortcodeshop,[
-                            [/色/g,shInfo[i].shBtncolor],
-                            [/商品URL/g,afurl[i]],
-                            [/ショップ名/g,shInfo[i].shName]
-                          ]);
-        if (i == mainnum) {
-          shortcodesite[i] = rplc_str(shortcodesite[i],[[/メインの場合/g,"," + "\n" + "\"" + "main" + "\"" +":" + "\"" + "true" + "\""]]);
+    /*サイト作成時はadded情報が要らないが、混乱を避けるために配列を作る*/
+    shortcodesite[0] = [];
+    for (var i = 0; i < codebox[0].length; i++) {
+      if ((shjudgeresult[0][i] === "HTML") || (shjudgeresult[0][i] === "直リンク")) {
+        shortcodesite[0][i] = rplc_str(shortcodeshop,[
+                              [/色/g,shInfo[0][i].shBtncolor],
+                              [/商品URL/g,afurl[0][i]],
+                              [/ショップ名/g,shInfo[0][i].shName]
+                            ]);
+        if (i === mainnum) {
+          shortcodesite[0][i] = rplc_str(shortcodesite[0][i],[[/メインの場合/g,"," + "\n" + "\"" + "main" + "\"" +":" + "\"" + "true" + "\""]]);
         }else {
-          shortcodesite[i] = rplc_str(shortcodesite[i],[[/メインの場合/g,""]]);
+          shortcodesite[0][i] = rplc_str(shortcodesite[0][i],[[/メインの場合/g,""]]);
         }
       }else {
-        shortcodesite[i] = "";
+        shortcodesite[0][i] = "";
       }
     }
     /*ショップサイトの作成終わり*/
 
     /*ショートコードのサイト間にカンマを入れる*/
-    for (var i = 0; i < afcodepart.length; i++) {
-      let j = 0;
+    for (let i=0,j=0; i < codebox[0].length; i++) {
       //ショップが有効ならカンマを入れる
-      if(shvalid[i] === true){
-        shortcodesite[i] = shortcodesite[i] + ",";
+      if(shvalid[0][i] === true){
+        shortcodesite[0][i] = shortcodesite[0][i] + ",";
         j++;
       }
       //有効数より1つ少ない数のカンマを入れる
@@ -427,7 +492,7 @@ window.onload = function(){ //始まり
     /*ショートコードのサイト間にカンマを入れる　終わり*/
 
     /*ショートコード文字列結合*/
-    var shortcodesitejoin = shortcodesite.join("\u0020");
+    var shortcodesitejoin = shortcodesite[0].join("\u0020");
     var shrtcdArray = [shortcodestrhead,shortcodesitejoin,shortcodestrend];
     var shortcodealljoin = shrtcdArray.join("\u0020");
     var shortcodefin = rplc_str(shortcodealljoin,[
@@ -443,21 +508,23 @@ window.onload = function(){ //始まり
     //HTMLタグ作成
     /*ショップの分だけ、siteを作る*/
     var htmlsite = new Array();
-    for (var i = 0; i < afcodepart.length; i++) {
-      if ((shjudgeresult[i] == "HTML") || (shjudgeresult[i] == "直リンク")) {
-        htmlsite[i] = rplc_str(htmlstrshop,[
-                      [/色/g,shInfo[i].shBtncolor],
-                      [/商品URL/g,afurlatrb[i]],
-                      [/ショップ名/g,shInfo[i].shName]
+    /*サイト作成時はadded情報が要らないが、混乱を避けるために配列を作る*/
+    htmlsite[0] = [];
+    for (var i = 0; i < codebox[0].length; i++) {
+      if ((shjudgeresult[0][i] == "HTML") || (shjudgeresult[0][i] == "直リンク")) {
+        htmlsite[0][i] = rplc_str(htmlstrshop,[
+                      [/色/g,shInfo[0][i].shBtncolor],
+                      [/商品URL/g,afurlatrb[0][i]],
+                      [/ショップ名/g,shInfo[0][i].shName]
                       ]);
       }else {
-        htmlsite[i] = "";
+        htmlsite[0][i] = "";
       }
     }
     /*ショップの分だけ、siteを作る 終わり*/
 
     /*HTML結合*/
-    var htmlsitejoin = htmlsite.join("\n");
+    var htmlsitejoin = htmlsite[0].join("\n");
     var htmlArray = [htmlstrhead,htmlsitejoin,htmlstrend];
     var htmlalljoin = htmlArray.join("\n");
     var htmlfin = rplc_str(htmlalljoin,[
@@ -478,15 +545,15 @@ window.onload = function(){ //始まり
     insert_and_output(validshnum,"result");//有効リンク数
 
     insert_and_output("アフィリエイトリンク","result");
-    for (var i = 0; i < afcodepart.length; i++) {//リンク箇所
-      insert_and_output(shInfo[i].shName,"result");
-      insert_and_output(afurl[i],"result");
+    for (var i = 0; i < codebox[0].length; i++) {//リンク箇所
+      insert_and_output(shInfo[0][i].shName,"result");
+      insert_and_output(afurl[0][i],"result");
     }
 
     insert_and_output("画像リンク","result");
-    for (var i = 0; i < afcodepart.length; i++) {//リンク箇所
-      insert_and_output(shInfo[i].shName,"result");
-      insert_and_output(imgsrc[i],"result");
+    for (var i = 0; i < codebox[0].length; i++) {//リンク箇所
+      insert_and_output(shInfo[0][i].shName,"result");
+      insert_and_output(imgsrc[0][i],"result");
     }
 
     insert_and_output("ショートコード","result");
