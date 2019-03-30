@@ -371,8 +371,8 @@ window.onload = function(){ //始まり
           continue;
 
         }else if ((n===1)&&(i===1)&&(shjudgeresult[n][i]==="直リンク")) {//付記情報かつ直リンクの場合、直画像リンクとして処理
-          imgsrcatrb[n][i] = codebox[n][i];
-          imgsrc[n][i] =  "src=\"" + codebox[n][i].replace(/\r?\n/g, '') + "\"";
+          imgsrcatrb[n][i] = "src=\"" + codebox[n][i].replace(/\r?\n/g, '') + "\"";
+          imgsrc[n][i] = codebox[n][i];
           continue;
 
         }else {//無効や、imgタグが無い場合
@@ -481,13 +481,14 @@ window.onload = function(){ //始まり
 
     /*ショートコードのサイト間にカンマを入れる*/
     for (let i=0,j=0; i < codebox[0].length; i++) {
+      //有効数より1つ少ない数のカンマを入れる
+      if(j >= validshnum-1){break;}
+
       //ショップが有効ならカンマを入れる
       if(shvalid[0][i] === true){
         shortcodesite[0][i] = shortcodesite[0][i] + ",";
         j++;
       }
-      //有効数より1つ少ない数のカンマを入れる
-      if(j >= validshnum-1){break;}
     }
     /*ショートコードのサイト間にカンマを入れる　終わり*/
 
